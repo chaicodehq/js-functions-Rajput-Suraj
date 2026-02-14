@@ -45,17 +45,75 @@
  *   // => [{ rating: 5 }, { rating: 3 }]
  */
 export function createFilter(field, operator, value) {
-  // Your code here
+  return (obj) => {
+    if (!obj || obj[field] === undefined) {
+      return false;
+    }
+
+    const actualValue = obj[field];
+
+    switch (operator) {
+      case ">":
+        return actualValue > value;
+      case "<":
+        return actualValue < value;
+      case ">=":
+        return actualValue >= value;
+      case "<=":
+        return actualValue <= value;
+      case "===":
+        return actualValue === value;
+      default:
+        return false;
+    }
+  };
 }
 
 export function createSorter(field, order = "asc") {
-  // Your code here
+  return (a, b) => {
+    const valA = a[field];
+    const valB = b[field];
+
+    if (valA === undefined) return 1;
+    if (valB === undefined) return -1;
+
+    let comparison = 0;
+
+    if (typeof valA === "string" && typeof valB === "string") {
+      comparison = valA.localeCompare(valB);
+    } else {
+      if (valA < valB) comparison = -1;
+      if (valA > valB) comparison = 1;
+    }
+
+    return order === "desc" ? comparison * -1 : comparison;
+  };
 }
 
 export function createMapper(fields) {
-  // Your code here
+  return (obj) => {
+    if (!obj) {
+      return null;
+    }
+
+    return fields.reduce((newObj, field) => {
+      if (Object.prototype.hasOwnProperty.call(obj, field)) {
+        newObj[field] = obj[field];
+      }
+      return newObj;
+    }, {});
+  };
 }
 
 export function applyOperations(data, ...operations) {
-  // Your code here
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+  return operations.reduce((acc, op) => {
+    if (typeof op === "function") {
+      return op(acc);
+    }
+    return acc;
+  }, data);
 }
