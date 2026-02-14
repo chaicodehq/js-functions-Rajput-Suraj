@@ -54,21 +54,89 @@
  *   // red and blue objects are UNCHANGED
  */
 export function mixColors(color1, color2) {
-  // Your code here
+  if (
+    !color1 ||
+    !color2 ||
+    color1.r === undefined ||
+    color1.g === undefined ||
+    color1.b === undefined ||
+    color2.r === undefined ||
+    color2.g === undefined ||
+    color2.b === undefined
+  ) {
+    return null;
+  }
+
+  const mixedR = Math.round((color1.r + color2.r) / 2);
+  const mixedG = Math.round((color1.g + color2.g) / 2);
+  const mixedB = Math.round((color1.b + color2.b) / 2);
+
+  return {
+    name: `${color1.name}-${color2.name}`,
+    r: mixedR,
+    g: mixedG,
+    b: mixedB,
+  };
 }
 
 export function adjustBrightness(color, factor) {
-  // Your code here
+  if (
+    !color ||
+    typeof factor !== "number" ||
+    color.r === undefined ||
+    color.g === undefined ||
+    color.b === undefined
+  ) {
+    return null;
+  }
+
+  const clamp = (val) => {
+    const adjusted = Math.round(val * factor);
+    return Math.max(0, Math.min(255, adjusted));
+  };
+
+  return {
+    name: color.name,
+    r: clamp(color.r),
+    g: clamp(color.g),
+    b: clamp(color.b),
+  };
 }
 
 export function addToPalette(palette, color) {
-  // Your code here
+  if (!color) {
+    return Array.isArray(palette) ? [...palette] : [];
+  }
+
+  if (!Array.isArray(palette)) {
+    return [color];
+  }
+
+  return [...palette, color];
 }
 
 export function removeFromPalette(palette, colorName) {
-  // Your code here
+  if (!Array.isArray(palette)) {
+    return [];
+  }
+
+  return palette.filter((color) => color.name !== colorName);
 }
 
 export function mergePalettes(palette1, palette2) {
-  // Your code here
+  const arr1 = Array.isArray(palette1) ? palette1 : [];
+  const arr2 = Array.isArray(palette2) ? palette2 : [];
+
+  const combined = [...arr1, ...arr2];
+
+  const seenNames = new Set();
+
+  return combined.filter((color) => {
+    if (color && color.name && !seenNames.has(color.name)) {
+      seenNames.add(color.name);
+      return true;
+    }
+
+    return false;
+  });
 }
